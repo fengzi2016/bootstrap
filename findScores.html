@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scores</title>
+    <link rel="stylesheet" href="./bootstrap-3.3.7-dist/css/bootstrap.css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="./bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="scoresCss.css" type="text/css">
+</head>
+<body>
+<div class="head">
+    <div class="logo">1</div>
+</div>
+<div class="content">
+    <div class="left">
+        <div class="list-group">
+            <a href="#" class="list-group-item active">
+                Cras justo odio
+            </a>
+            <a href="#" class="list-group-item index">学生信息</a>
+            <a href="#" class="list-group-item add">添加学生信息</a>
+            <a href="#" class="list-group-item find">查询学生信息</a>
+            <a href="#" class="list-group-item change">修改学生信息</a>
+        </div>
+    </div>
+    <div class="right">
+        <div class="col-lg-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="Id" placeholder="Please input id, if you want to put ids,please use ',' to split them">
+                <span class="input-group-btn">
+        <button class="btn btn-default" type="button" onclick="onSubmit()">Search</button>
+      </span>
+            </div><!-- /input-group -->
+        </div>
+        <table class="table table-striped table-bordered table-responsive table-hover">
+            <tbody class="tbody">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+<script>
+    let baseInfo=
+        [
+            ["学号","姓名", "数学", "语文","英语","编程"],
+            ['201611',"张三", "95", "80", "75", "80"],
+            ['201612',"李四", "80", "70", "85", "90"],
+            ['201613',"张5", "95", "80", "75", "80"],
+            ['201614',"李6", "80", "70", "85", "90"]
+        ];
+    function findJudge(inputInfo,baseInfo) {
+        baseInfo=baseInfo.reduce(function(accumulator,currentValue){
+            accumulator.push(currentValue[0]);
+            return accumulator;
+        },[]);
+        if(inputInfo.split(',').length>1){
+            inputInfo=inputInfo.split(',');
+            for (let input_info of inputInfo) {
+                if (baseInfo.indexOf(input_info) !== -1) {
+                    return true;
+                }
+            }return false;
+        }else{
+            return  baseInfo.indexOf(inputInfo) !== -1?true:false;
+        }
+    }
+    function SecondBehavior(inputInfo,baseInfo) {
+        let needInfo;
+        if (inputInfo.split(',').length > 1) {
+            inputInfo=inputInfo.split(',');
+            needInfo = baseInfo.reduce(function (accumulator, currentValue,currentIndex) {
+                for (let input_info of inputInfo) {
+                    if (input_info === currentValue[0]||currentIndex===0) {
+                        accumulator.push(currentValue);
+                        break;
+                    }
+                }
+                return accumulator;
+            }, []);
+
+        }else{
+            needInfo=baseInfo.filter(function (number,index) {
+                return number[0]===inputInfo||index===0;
+            });
+        }
+        return needInfo;
+    }
+    function start() {
+        let needInfo;
+        let getId=document.getElementById("Id").value;
+        let findJudges=findJudge(getId,baseInfo);
+        if(findJudges===false){
+            alert('请按正确的格式输入要打印的学生的学号（格式： 学号, 学号,...）');
+            return null;
+        }else{
+             needInfo=SecondBehavior(getId,baseInfo);
+            return needInfo;
+        }
+
+    }
+    function onSubmit() {
+        let needInfo=start();
+        if(needInfo!==null){
+            needInfo.forEach(function (value,tag) {
+                let base=document.getElementsByClassName("tbody");
+                let newTr=base.insertRow(tag);
+                value.forEach(function (element,innerTag) {
+                    let innerPara=newTr.insertCell(innerTag);
+                    let node =document.createTextNode(element);
+                    innerPara.appendChild(node);
+                    base.appendChild(innerPara);
+                });
+            });
+        }
+    }
+
+</script>
+
+</html>
